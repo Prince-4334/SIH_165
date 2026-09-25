@@ -1,16 +1,10 @@
-"""
-SIF SENTINEL - AI/NLP Screening & SIF Intelligence Engine
-Analyzes HSE narratives (UA/UC, Near-Miss, Incidents) for Serious Injury & Fatality precursors.
-Complies with IOGP Life-Saving Rules and industrial barrier management principles.
-"""
+
 
 import re
 from typing import Dict, Any, List, Tuple
 from config import IOGP_RULES, SCORING_DISCLAIMER, RECOMMENDATION_DISCLAIMER
 
-# ==============================================================================
-# VOCABULARIES, RULES & SAFETY ONTOLOGY
-# ==============================================================================
+
 
 # Negation & omission indicators (crucial for distinguishing failed barriers vs verified ones)
 OMISSION_NEGATION_PATTERNS = [
@@ -242,9 +236,7 @@ def analyze_safety_report(narrative: str, site: str = "OIL Facility", report_typ
     """
     raw_text = clean_text(narrative)
     
-    # -------------------------------------------------------------------------
-    # 1. Error / Boundary Checks (Empty, Too Short, Insufficient Signal)
-    # -------------------------------------------------------------------------
+   
     if not raw_text:
         return {
             "sif_level": "NEEDS REVIEW",
@@ -298,9 +290,7 @@ def analyze_safety_report(narrative: str, site: str = "OIL Facility", report_typ
     # Check for Barrier Failure / Omission / Violation (Section 13 Test 1, 2, 3, 4)
     has_barrier_omission = any(re.search(p, lowered) for p in OMISSION_NEGATION_PATTERNS)
 
-    # -------------------------------------------------------------------------
-    # 2. Rule & Hazard Matching
-    # -------------------------------------------------------------------------
+   
     rule_scores = {}
     for rule, defn in RULE_DEFINITIONS.items():
         score = 0
@@ -355,9 +345,7 @@ def analyze_safety_report(narrative: str, site: str = "OIL Facility", report_typ
                 "error_message": None
             }
 
-    # -------------------------------------------------------------------------
-    # 3. Fine-Grained Hazard & Barrier Failure Determination
-    # -------------------------------------------------------------------------
+   
     rule_info = RULE_DEFINITIONS[top_rule]
     hazard = rule_info["hazard_default"]
     barrier = rule_info["barrier_default"]
